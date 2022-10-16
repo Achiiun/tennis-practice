@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 @Data
 public class MemberSaveForm {
 
+
   @NotNull @Size(min = 8, max = 20, message = "아이디는 8~20 자 이내여야 합니다.")
   private String loginId;
 

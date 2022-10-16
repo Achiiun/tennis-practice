@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type>" content="text/html; charset=UTF-8"/>
+  <link rel="shortcut icon" href="#">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.1.js"
+          integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+          crossorigin="anonymous"></script>
+    <title>detail</title>
+</head>
+<body>
+<div class="board-detail">
+  <div class="board-header">
+    <h3 th:text="${board.title}"></h3>
+    <table>
+      <thead>
+      <tr>
+        <th>
+          <a th:text="${board.author}"></a>
+        </th>
+        <th>
+          <a th:text="${board.createdDate}"></a>
+        </th>
+        <th>
+          <a th:text="${board.views}"></a>
+        </th>
+        <div th:if="${session.loginMember != null}">
+          <th th:if="${session.loginMember.id == board.member.id}">
+            <button th:onclick="deleteBoard([[${board.id}]])">게시글 삭제</button>
+          </th>
+          <th th:if="${session.loginMember.id == board.member.id}">
+            <form class="col" role="form" th:action="@{/boards/update/{id} (id=${board.id})}"
+                  method="get">
+              <button type="submit">게시글 수정</button>
+            </form>
+          </th>
+        </div>
+      </tr>
+      </thead>
+    </table>
+  </div>
+  <div class="board-content">
+    <p th:text="${board.content}"></p>
+  </div>
+</div>
+</body>
+</html>

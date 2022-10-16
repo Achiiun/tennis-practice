@@ -12,7 +12,7 @@
 <body>
 
 <div>
-    <form role="form" action="/members/memberSave" method="post" th:object="${form}">
+    <form role="form" action="/members/memberSave" method="post" th:object="${formtest}">
         <div>
             <input type="text" th:field="${form.loginId}" placeholder="아이디를 입력해주세요.">
             <div th:errors="${form.loginId}"></div>

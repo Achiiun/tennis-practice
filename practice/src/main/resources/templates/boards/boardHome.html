@@ -26,7 +26,9 @@
         <tr th:each="board:${list}">
 
             <td th:text="${board.id}"></td>
-            <td th:text="${board.title}"></td>
+            <td>
+                <a th:text="${board.title}" th:href="@{/boards/detail/{id} (id=${board.id})}"></a>
+            </td>
             <td th:text="${board.author}"></td>
             <td th:text="${board.views}"></td>
             <td th:text="${board.createdDate}"></td>

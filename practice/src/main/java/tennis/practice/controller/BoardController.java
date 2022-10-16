@@ -6,10 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import tennis.practice.domain.Board;
 import tennis.practice.domain.Member;
 import tennis.practice.dto.BoardSaveForm;
@@ -58,5 +55,17 @@ public class BoardController {
     //==게시글 등록==//
     Long boardId = boardService.addBoard(form, member);
     return "redirect:/";
+  }
+
+  @GetMapping("/detail/{boardId}")
+  public String boardDetail(@PathVariable("boardId") Long boardId, Model model) {
+
+    Board board = boardService.findOne(boardId);
+    boardDetailView(boardId, model, board);
+    return "boards/boardDetailForm";
+  }
+
+  private void boardDetailView(Long boardId, Model model, Board board) {
+    model.addAttribute("board", board);
   }
 }
