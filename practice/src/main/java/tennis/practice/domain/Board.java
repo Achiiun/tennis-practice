@@ -13,7 +13,10 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
+import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -53,6 +56,14 @@ public class Board {
   @JoinColumn(name = "member_id")
   private Member member;
 
+  /*
+   * mappedBy: 연관관계의 주인 필드를 선택
+   * cascade: 영속성 전이 기능을 사용 (REMOVE: 부모 엔티티가 삭제하면 연관된 자식 엔티티도 함께 삭제된다.)
+   */
+//  @OneToMany(mappedBy = "board", cascade = REMOVE)
+//  private List<Comment> comments = new ArrayList<>();
+
+
   //==생성 메서드==//
   public static Board createBoard(BoardSaveForm form, Member member) {
     Board board = new Board();
@@ -69,4 +80,5 @@ public class Board {
 
     return board;
   }
+
 }

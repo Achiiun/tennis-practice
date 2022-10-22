@@ -8,9 +8,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tennis.practice.domain.Board;
+import tennis.practice.domain.Comment;
 import tennis.practice.domain.Member;
 import tennis.practice.dto.BoardSaveForm;
 import tennis.practice.service.BoardService;
+import tennis.practice.service.CommentService;
 import tennis.practice.web.SessionConst;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,9 @@ import java.util.List;
 public class BoardController {
 
   private final BoardService boardService;
+
+  private final CommentService commentService;
+
 
   //==게시글 전체조회==//
   @GetMapping("/home")
@@ -54,7 +59,7 @@ public class BoardController {
 
     //==게시글 등록==//
     Long boardId = boardService.addBoard(form, member);
-    return "redirect:/";
+    return "redirect:/boards/detail/" + boardId;
   }
 
   @GetMapping("/detail/{boardId}")
@@ -67,5 +72,29 @@ public class BoardController {
 
   private void boardDetailView(Long boardId, Model model, Board board) {
     model.addAttribute("board", board);
+
+    List<Comment> comments = commentService.findComments(boardId);
+    if (comments != null) {
+      model.addAttribute("comments", comments);
+    }
+  }
+
+  @PostMapping("/delete/{boardId}")
+  public String boardDelete(@PathVariable("boardId") Long boardId) {
+    boardService.deleteById(boardId);
+    return "redirect:/boards/home";
+  }
+
+  @GetMapping("/update/{boardId}")
+  public String boardUpdateForm(@PathVariable("boardId") Long boardId, Model model) {
+    Board board = boardService.findOne(boardId);
+    model.addAttribute("board", board);
+    return "/boards/boardUpdateForm";
+  }
+
+  @PostMapping("/update/{boardId}")
+  public String boardUpdate(@PathVariable("boardId") Long boardId, Board board) {
+    boardService.update(board, boardId);
+    return "redirect:/boards/detail/" + boardId;
   }
 }
