@@ -37,6 +37,21 @@ public class CommentService {
     commentRepository.save(comment);
   }
 
+  @Transactional
+  public void deleteById(Long commentId) {
+    commentRepository.deleteById(commentId);
+  }
 
+  @Transactional
+  public void updateComment(Long commentId, Map<String, Object> param) {
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd MM:mm:ss");
+    Comment comment = commentRepository.findById(commentId).get();
+    comment.setContent(param.get("content").toString());
+    comment.setModifiedDate(LocalDateTime.now().format(dtf));
+  }
 
+  @Transactional
+  public void updateCommentCancel(Long commentId) {
+    Comment comment = commentRepository.findById(commentId).get();
+  }
 }
