@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type>" content="text/html; charset=UTF-8"/>
+  <link rel="shortcut icon" href="#">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;400&display=swap"
+        rel="stylesheet">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.1.js"
+          integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+          crossorigin="anonymous"></script>
+    <title>Matching Add</title>
+</head>
+<body>
+<div class="matching-main"> <!-- Matching Main Start -->
+  <h4>매치 생성</h4>
+  <form role="form" th:object="${matching}" action="/matching/new" method="post">
+    <div class="form-group">
+      <label th:for="title">매칭 이름:</label>
+      <input id="title" type="text" class="form-control" th:field="${matching.title}"
+             placeholder="입력해주세요." />
+      <div class="field-error" th:errors="${matching.title}"></div>
+    </div>
+    <div class="form-group">
+      <label th:for="matchingDate">매칭 날짜:</label>
+      <input id="matchingDate" type="date" class="form-control" th:field="${matching.matchingDate}"
+             placeholder="입력해주세요." />
+      <div class="field-error" th:errors="${matching.matchingDate}"></div>
+    </div>
+    <div class="form-group">
+      <label th:for="matchingTime">매칭 시간:</label>
+      <input id="matchingTime" type="time" class="form-control" th:field="${matching.matchingTime}"
+             placeholder="입력해주세요." />
+      <div class="field-error" th:errors="${matching.matchingTime}"></div>
+    </div>
+    <div class="form-group">
+      <label th:for="matchingType">매칭 종류: </label>
+      <input type="radio" th:field="${matching.matchingType}" value="SINGLE">단식
+      <input type="radio" th:field="${matching.matchingType}" value="DOUBLE">복식
+      <div class="field-error" th:errors="${matching.matchingType}"></div>
+    </div>
+    <div class="form-group">
+      <label th:for="courtType">코트 종류: </label>
+      <input type="radio" th:field="${matching.courtType}" value="INDOOR">실내
+      <input type="radio" th:field="${matching.courtType}" value="OUTDOOR">실외
+      <div class="field-error" th:errors="${matching.courtType}"></div>
+    </div>
+    <div class="form-group">
+      <label th:for="place">매칭 장소:</label>
+      <input id="place" type="text" class="form-control" th:field="${matching.place}"
+             placeholder="입력해주세요." />
+      <div class="field-error" th:errors="${matching.place}"></div>
+    </div>
+    <button type="submit" class="matching-submit" id="matching-submit">매칭 생성</button>
+  </form>
+  <button type="button" th:onclick="|location.href='@{/matching/home}'|">취소</button>
+</div> <!-- Matching Main End -->
+</body>
+</html>

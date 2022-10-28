@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type>" content="text/html; charset=UTF-8"/>
+    <link rel="shortcut icon" href="#">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;400&display=swap"
+          rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.1.js"
+            integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+            crossorigin="anonymous"></script>
+    <title>Matching Detail</title>
+</head>
+<body>
+<div class="matching-detail"> <!-- Matching Detail Start -->
+    <h6>매칭 상세 정보</h6>
+    <div class="matching-header"> <!-- 매칭 헤더 -->
+        <h3 th:text="${matching.title}"></h3>
+        <table>
+            <thead>
+            <tr>
+                <th>
+                    <img th:src="@{/images/user.png}" alt="logo" height="15" width="20">
+                    <a th:text="${matching.author}"></a>
+                </th>
+                <th>
+                    <img th:src="@{/images/clock.png}" alt="logo" height="15" width="20">
+                    <a th:text="${matching.createdDate}"></a>
+                </th>
+            </tr>
+            </thead>
+        </table>
+    </div> <!-- 매칭 헤더 끝 -->
+    <div class="matching-content"> <!-- 매칭 본문 -->
+        <table th:border="1">
+            <tr>
+                <th>매칭 날짜</th>
+                <td><a th:text="${matching.matchingDate}"></a></td>
+            </tr>
+            <tr>
+                <th>매칭 시간</th>
+                <td><a th:text="${matching.matchingTime}"></a></td>
+            </tr>
+            <tr>
+                <th>매칭 종류</th>
+                <td><a th:text="${matching.matchingType.title}"></a></td>
+            </tr>
+            <tr>
+                <th>코트 종류</th>
+                <td><a th:text="${matching.courtType.title}"></a></td>
+            </tr>
+            <tr>
+                <th>매칭 장소</th>
+                <td><a th:text="${matching.place}"></a></td>
+            </tr>
+        </table>
+        <div th:if="${session.loginMember != null}">
+            <th th:if="${session.loginMember.id == matching.member.id}">
+                <table>
+                    <form class="col" role="form" th:action="@{/matching/delete/{id} (id=${matching.id})}"
+                          method="get">
+                        <button type="submit">매칭 삭제</button>
+                    </form>
+                    <form class="col" role="form" th:action="@{/matching/update/{id} (id=${matching.id})}"
+                          method="get">
+                        <button type="submit">매칭 수정</button>
+                    </form>
+                </table>
+            </th>
+        </div>
+        <button type="button" th:onclick="|location.href='@{/matching/home}'|">이전</button>
+    </div> <!-- 매칭 본문 끝 -->
+</div> <!-- matching Detail End -->
+</body>
+</html>
