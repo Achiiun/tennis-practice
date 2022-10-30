@@ -4,15 +4,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum PlayerType implements PlayerMapperType{
+public enum MatchingCondition implements MatchingConditionMapper{
 
-  PARTICIPANTS("참여자"),
-  CONSTRUCTOR("생성자");
+  AVAILABLE("신청가능"),
+  DONE("신청마감");
 
   @Getter
   private final String title;
-
-//  @Getter
-//  private final String code;
 
 }

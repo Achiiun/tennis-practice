@@ -9,4 +9,8 @@ public interface MatchingRepositoryInterface {
   List<Matching> findAll();
 
   Matching findOne(Long matchingId);
+
+  void increasePlayerNumber(Long matchingId);
+
+  void matchingCondtionCheck(Long matchingId);
 }

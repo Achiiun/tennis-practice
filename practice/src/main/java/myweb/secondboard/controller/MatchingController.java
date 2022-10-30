@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import myweb.secondboard.domain.Matching;
 import myweb.secondboard.domain.Member;
+import myweb.secondboard.domain.Player;
 import myweb.secondboard.dto.MatchingSaveForm;
 import myweb.secondboard.dto.MatchingUpdateForm;
+import myweb.secondboard.dto.PlayerAddForm;
 import myweb.secondboard.service.MatchingService;
+import myweb.secondboard.service.PlayerService;
 import myweb.secondboard.web.SessionConst;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -27,6 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 public class MatchingController {
 
   private final MatchingService matchingService;
+
+  private final PlayerService playerService;
 
   @GetMapping("/home")
   public String home(@PageableDefault(page = 0, size = 10, sort = "createdDate", direction = Sort.Direction.DESC)
@@ -70,12 +76,16 @@ public class MatchingController {
   public String matchingDetail(@PathVariable("matchingId") Long matchingId, Model model) {
 
     Matching matching = matchingService.findOne(matchingId);
-    matchingDetailView(matchingId, model, matching);
-    return "/matching/matchingDetail";
-  }
-
-  private void matchingDetailView(Long matchingId, Model model, Matching matching) {
     model.addAttribute("matching", matching);
+
+    List<Player> players = playerService.findAllByMatchingId(matchingId);
+    List<Player> playersA = players.stream().filter(m -> m.getTeam().toString().equals("A")).toList();
+    List<Player> playersB = players.stream().filter(m -> m.getTeam().toString().equals("B")).toList();
+
+    model.addAttribute("playersA", playersA);
+    model.addAttribute("playersB", playersB);
+    model.addAttribute("playerAddForm", new PlayerAddForm());
+    return "/matching/matchingDetail";
   }
 
   @GetMapping("/delete/{matchingId}")
@@ -96,15 +106,15 @@ public class MatchingController {
     form.setMatchingDate(matching.getMatchingDate());
     form.setMatchingTime(matching.getMatchingTime());
     form.setMatchingType(matching.getMatchingType());
-    model.addAttribute("form",form);
+    model.addAttribute("form", form);
 
     return "/matching/matchingUpdateForm";
   }
 
   @PostMapping("/update/{matchingId}")
-  public String matchingUpdate(@Validated @ModelAttribute("form")MatchingUpdateForm form,
-                            BindingResult bindingResult, HttpServletRequest request,
-                            @PathVariable("matchingId") Long matchingId) {
+  public String matchingUpdate(@Validated @ModelAttribute("form") MatchingUpdateForm form,
+                               BindingResult bindingResult, HttpServletRequest request,
+                               @PathVariable("matchingId") Long matchingId) {
 
     Member member = (Member) request.getSession(false)
       .getAttribute(SessionConst.LOGIN_MEMBER);
@@ -118,4 +128,12 @@ public class MatchingController {
     return "redirect:/matching/detail/" + matchingId;
   }
 
+
+  @PostMapping("/player/add")
+  public String matchingPlayerAdd(@ModelAttribute("playerAddForm")PlayerAddForm form) {
+    playerService.matchingPlayerAdd(form);
+    matchingService.increasePlayerNumber(Long.valueOf(form.getMatchingId()));
+    matchingService.matchingCondtionCheck(Long.valueOf(form.getMatchingId()));
+    return "redirect:/matching/home";
+  }
 }

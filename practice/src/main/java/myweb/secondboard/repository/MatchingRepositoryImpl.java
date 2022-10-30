@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class MatchingRepositoryImpl {
+public class MatchingRepositoryImpl implements MatchingRepositoryInterface{
 
   @PersistenceContext
   private final EntityManager em;
@@ -21,5 +21,17 @@ public class MatchingRepositoryImpl {
 
   public Matching findOne(Long matchingId) {
     return em.find(Matching.class, matchingId);
+  }
+
+  @Override
+  public void increasePlayerNumber(Long matchingId) {
+    Matching matching = findOne(matchingId);
+    matching.increasePlayerNumber(matching);
+  }
+
+  @Override
+  public void matchingCondtionCheck(Long matchingId) {
+    Matching matching = findOne(matchingId);
+    matching.matchingConditionCheck(matching);
   }
 }

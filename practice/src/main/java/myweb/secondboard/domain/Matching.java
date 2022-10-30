@@ -4,16 +4,14 @@ package myweb.secondboard.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import myweb.secondboard.dto.BoardSaveForm;
-import myweb.secondboard.dto.BoardUpdateForm;
 import myweb.secondboard.dto.MatchingSaveForm;
 import myweb.secondboard.dto.MatchingUpdateForm;
 import myweb.secondboard.web.CourtType;
+import myweb.secondboard.web.MatchingCondition;
 import myweb.secondboard.web.MatchingType;
-import myweb.secondboard.web.PlayerType;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -22,8 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -31,6 +27,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 @Getter @Setter
 @NoArgsConstructor
+@DynamicInsert
 public class Matching {
 
   @Id
@@ -58,7 +55,6 @@ public class Matching {
   @Column(length = 40)
   private LocalTime matchingTime;
 
-
   @CreatedDate
   @Column(length = 40)
   private String createdDate;
@@ -67,9 +63,9 @@ public class Matching {
   @Column(length = 40)
   private String modifiedDate;
 
-//  @NotNull
-//  @Column(length = 40)
-//  private PlayerType playerType;
+  @Column(columnDefinition = "integer default 1")
+  private Integer playerNumber;
+
 
   @Enumerated(EnumType.STRING)
   private CourtType courtType;
@@ -77,9 +73,13 @@ public class Matching {
   @Enumerated(EnumType.STRING)
   private MatchingType matchingType;
 
+  @Enumerated(EnumType.STRING)
+  private MatchingCondition matchingCondition;
+
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "member_id")
   private Member member;
+
 
   public static Matching createMatching(MatchingSaveForm form, Member member) {
     Matching matching = new Matching();
@@ -93,6 +93,8 @@ public class Matching {
     matching.setCreatedDate(LocalDateTime.now().format(dtf));
     matching.setCourtType(form.getCourtType());
     matching.setMatchingType(form.getMatchingType());
+    matching.setMatchingCondition(MatchingCondition.AVAILABLE);
+    matching.setPlayerNumber(matching.getPlayerNumber());
     matching.setMember(member);
     return matching;
   }
@@ -111,5 +113,18 @@ public class Matching {
     matching.setModifiedDate(LocalDateTime.now().format(dtf));
     matching.setMember(member);
 
+  }
+
+  public void increasePlayerNumber(Matching matching) {
+    matching.setPlayerNumber(matching.getPlayerNumber() + 1);
+  }
+
+  public void matchingConditionCheck(Matching matching) {
+    if (matching.getPlayerNumber() == 2 && matching.getMatchingType().getTitle() == "단식") {
+      matching.setMatchingCondition(MatchingCondition.DONE);
+    }
+    if (matching.getPlayerNumber() == 4 && matching.getMatchingType().getTitle() == "복식") {
+      matching.setMatchingCondition(MatchingCondition.DONE);
+    }
   }
 }

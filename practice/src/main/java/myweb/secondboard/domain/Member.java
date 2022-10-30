@@ -2,8 +2,6 @@ package myweb.secondboard.domain;
 
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import javax.persistence.*;
 
@@ -13,7 +11,6 @@ import lombok.Setter;
 import myweb.secondboard.dto.MemberSaveForm;
 import myweb.secondboard.web.Gender;
 import myweb.secondboard.web.PasswordEncrypt;
-import myweb.secondboard.web.PlayerType;
 import myweb.secondboard.web.Provider;
 
 @Entity
@@ -48,10 +45,6 @@ public class Member implements Serializable {
 
   @Enumerated(EnumType.STRING)
   private Provider provider;
-
-//  @OneToMany(mappedBy = "member")
-//  private List<Player> players = new ArrayList<>();
-
 
   private String accessToken;
 

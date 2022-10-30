@@ -3,9 +3,8 @@ package myweb.secondboard.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import myweb.secondboard.dto.MatchingSaveForm;
-import myweb.secondboard.web.MatchingType;
-import myweb.secondboard.web.PlayerType;
+import myweb.secondboard.dto.PlayerAddForm;
+import myweb.secondboard.web.Team;
 
 import javax.persistence.*;
 
@@ -20,10 +19,8 @@ public class Player {
 
   @Id
   @GeneratedValue(strategy = IDENTITY)
+  @Column(name = "player_id")
   private Long id;
-
-  @Enumerated(EnumType.STRING)
-  private PlayerType playerType;
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "matching_id")
@@ -34,4 +31,24 @@ public class Player {
   @JoinColumn(name = "member_id")
   private Member member;
 
+  @Enumerated(EnumType.STRING)
+  private Team team;
+
+
+  public static Player createPlayerFromForm(PlayerAddForm form, Member member, Matching matching) {
+    Player player = new Player();
+    player.setMatching(matching);
+    player.setMember(member);
+    player.setTeam(Team.valueOf(form.getTeam()));
+    return player;
+  }
+
+  public static Player createPlayer(Matching matching, Member member) {
+    Player player = new Player();
+    player.setTeam(Team.A);
+    player.setMember(member);
+    player.setMatching(matching);
+
+    return player;
+  }
 }

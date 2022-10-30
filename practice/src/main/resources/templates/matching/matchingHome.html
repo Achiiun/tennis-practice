@@ -102,6 +102,7 @@
                 <th scope="col">코트 타입</th>
                 <th scope="col">참여자</th>
                 <th scope="col">생성자</th>
+                <th scope="col">매칭상태</th>
                 <th scope="col">
                     <button type="button" th:onclick="|location.href='@{/matching/matchingAdd}'|"
                             th:if="${session.loginMember != null}">매치 등록
@@ -117,12 +118,15 @@
                 <td th:text="${matching.title}"></td>
                 <td th:text="${matching.matchingType.title}"></td>
                 <td th:text="${matching.courtType.title}"></td>
-                <td th:if="${matching.matchingType.title.equals('단식')}" th:text="'1/' + ${matching.matchingType.code}"></td>
-                <td th:if="${matching.matchingType.title.equals('복식')}" th:text="'1/' + ${matching.matchingType.code}"></td>
+                <td th:if="${matching.matchingType.title.equals('단식')}"
+                    th:text="${matching.playerNumber} + '/' + ${matching.matchingType.code}"></td>
+                <td th:if="${matching.matchingType.title.equals('복식')}"
+                    th:text="${matching.playerNumber} + '/' + ${matching.matchingType.code}"></td>
                 <td th:text="${matching.author}"></td>
+                <td th:text="${matching.matchingCondition.title}"></td>
                 <td>
                     <button type="button" th:onclick="|location.href='@{/matching/detail/{id} (id=${matching.id})}'|"
-                            th:if="${session.loginMember != null}">신청하기
+                            th:if="${session.loginMember != null}">상세보기
                     </button>
                 </td>
             </tr>
