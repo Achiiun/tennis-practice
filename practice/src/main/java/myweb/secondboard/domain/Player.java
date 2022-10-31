@@ -7,6 +7,7 @@ import myweb.secondboard.dto.PlayerAddForm;
 import myweb.secondboard.web.Team;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -22,11 +23,12 @@ public class Player {
   @Column(name = "player_id")
   private Long id;
 
+  @NotNull
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "matching_id")
   private Matching matching;
 
-
+  @NotNull
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "member_id")
   private Member member;

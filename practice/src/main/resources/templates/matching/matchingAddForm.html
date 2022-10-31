@@ -12,6 +12,12 @@
     <title>Matching Add</title>
 </head>
 <body>
+<script>
+  var now_utc = Date.now()
+  var timeOff = new Date().getTimezoneOffset()*60000;
+  var today = new Date(now_utc-timeOff).toISOString().split("T")[0];
+  document.getElementById("matchingDate").setAttribute("max", today);
+</script>
 <div class="matching-main"> <!-- Matching Main Start -->
   <h4>매치 생성</h4>
   <form role="form" th:object="${matching}" action="/matching/new" method="post">
@@ -23,8 +29,7 @@
     </div>
     <div class="form-group">
       <label th:for="matchingDate">매칭 날짜:</label>
-      <input id="matchingDate" type="date" class="form-control" th:field="${matching.matchingDate}"
-             placeholder="입력해주세요." />
+      <input id="matchingDate" type="date" class="form-control" th:field="${matching.matchingDate}"/>
       <div class="field-error" th:errors="${matching.matchingDate}"></div>
     </div>
     <div class="form-group">

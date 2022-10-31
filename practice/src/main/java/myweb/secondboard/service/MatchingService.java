@@ -16,6 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -34,6 +38,11 @@ public class MatchingService {
     return matchingRepository.findAll(pageable);
   }
 
+  @Transactional
+  public List<Player> getPlayerList(Long matchingId) {
+    return playerRepository.findAllByMatchingId(matchingId);
+  }
+
   // 매칭 등록
   @Transactional
   public Long addMatching(MatchingSaveForm form, Member member) {
@@ -45,7 +54,8 @@ public class MatchingService {
   }
 
   @Transactional
-  public void deleteById(Long matchingId) {
+  public void deleteById(Long matchingId, List<Player> players) {
+    playerRepository.deleteAllInBatch(players);
     matchingRepository.deleteById(matchingId);
   }
 
@@ -62,4 +72,21 @@ public class MatchingService {
   public void matchingCondtionCheck(Long matchingId) {
     matchingRepository.matchingCondtionCheck(matchingId);
   }
+
+  public Player playerMemberCheck(Long matchingId, Long memberId) {
+    Optional<Player> result = playerRepository.exist(matchingId, memberId);
+    if (result.isEmpty()) {
+      return null;
+    }
+    return result.get();
+  }
+
+  public void deleteMatchingMember(Long matchingId, Long memberId) {
+    Player player = playerMemberCheck(matchingId, memberId);
+    playerRepository.delete(player);
+    Matching matching = matchingRepository.findOne(matchingId);
+    matching.setPlayerNumber(matching.getPlayerNumber() - 1);
+  }
 }
+
+

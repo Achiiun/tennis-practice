@@ -55,21 +55,44 @@
             </tr>
         </table>
         <div th:if="${session.loginMember != null}">
-            <th th:if="${session.loginMember.id == matching.member.id}">
-                <table>
-                    <form class="col" role="form" th:action="@{/matching/delete/{id} (id=${matching.id})}"
-                          method="get">
-                        <button type="submit">매칭 삭제</button>
-                    </form>
-                    <form class="col" role="form" th:action="@{/matching/update/{id} (id=${matching.id})}"
-                          method="get">
-                        <button type="submit">매칭 수정</button>
-                    </form>
-                </table>
-            </th>
 
+            <!--로그인 맴버가 매칭 생성자인 경우-->
+            <div th:if="${session.loginMember.id == matching.member.id}">
+                <div th:if="${matching.matchingCondition.title == '신청가능'}">
+                    <table>
+                        <form class="col" role="form" th:action="@{/matching/delete/{id} (id=${matching.id})}"
+                              method="post">
+                            <button type="submit">매칭 삭제</button>
+                        </form>
+                        <form class="col" role="form" th:action="@{/matching/update/{id} (id=${matching.id})}"
+                              method="get">
+                            <button type="submit">매칭 수정</button>
+                        </form>
+                    </table>
+                    <br>
+                    <table>A팀 맴버 정보
+                        <td th:each="a:${playersA}">
+                            <a th:text="${a.getMember().nickname}"></a>
+                        </td>
+                    </table>
+                    <br>
+                    <table>B팀 맴버 정보
+                        <td th:each="b:${playersB}">
+                            <a th:text="${b.getMember().nickname}"></a>
+                        </td>
+                    </table>
+                    <br>
+                </div>
 
-            <div th th:if="${session.loginMember.id != matching.member.id}">
+                <div th:if="${matching.matchingCondition.title == '신청마감'}">
+                    <br>
+                    <h4>마감된 매치입니다.</h4>
+                    <br>
+                </div>
+            </div>
+
+            <!--로그인 맴버가 매칭 생성자가 아닌 경우-->
+            <div th:if="${session.loginMember.id != matching.member.id}">
                 <form th:object="${playerAddForm}" action="/matching/player/add" method="post">
                     <input hidden name="memberId" th:value="${session.loginMember.id}"/>
                     <input hidden name="matchingId" th:value="${matching.id}"/>
@@ -92,13 +115,15 @@
                             </td>
                         </table>
                         <br>
-                        <div th:if="${playersA.size() < 1}">
-                            <input type="radio" th:field="${playerAddForm.team}" value="A">A
+                        <div th:if="${playerMemberCheck == null}"> <!--매칭에 참가된 인원이 아닐 경우-->
+                            <div th:if="${playersA.size() < 1}">
+                                <input type="radio" th:field="${playerAddForm.team}" value="A">A
+                            </div>
+                            <div th:if="${playersB.size() < 1}">
+                                <input type="radio" th:field="${playerAddForm.team}" value="B">B
+                            </div>
+                            <button type="submit">매치 참가</button>
                         </div>
-                        <div th:if="${playersB.size() < 1}">
-                            <input type="radio" th:field="${playerAddForm.team}" value="B">B
-                        </div>
-                        <button type="submit">매치 참가</button>
                     </div>
                     <div th:if="${matching.playerNumber == 4} and ${matching.matchingType.title == '복식'}">
                         <br>
@@ -119,13 +144,24 @@
                             </td>
                         </table>
                         <br>
-                        <div th:if="${playersA.size() < 2}">
-                            <input type="radio" th:field="${playerAddForm.team}" value="A">A
+                        <div th:if="${playerMemberCheck == null}"> <!--매칭에 참가된 인원이 아닐 경우-->
+                            <div th:if="${playersA.size() < 2}">
+                                <input type="radio" th:field="${playerAddForm.team}" value="A">A
+                            </div>
+                            <div th:if="${playersB.size() < 2}">
+                                <input type="radio" th:field="${playerAddForm.team}" value="B">B
+                            </div>
+                            <button type="submit">매치 참가</button>
                         </div>
-                        <div th:if="${playersB.size() < 2}">
-                            <input type="radio" th:field="${playerAddForm.team}" value="B">B
-                        </div>
-                        <button type="submit">매치 참가</button>
+                    </div>
+                </form>
+                <form th:action="@{/matching/delete/memberDelete/{id} (id=${matching.id})}"
+                      method="post">
+                    <input hidden name="memberId" th:value="${session.loginMember.id}"/>
+                    <input hidden name="matchingId" th:value="${matching.id}"/>
+                    <!--매칭에 참가된 인원이면서 매칭 마감이 안된 경우-->
+                    <div th:if="${playerMemberCheck != null} and ${matching.matchingCondition.title == '신청가능'}">
+                        <button type="submit">매칭 참가 취소</button>
                     </div>
                 </form>
             </div>

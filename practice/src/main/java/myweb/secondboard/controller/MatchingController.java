@@ -22,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Slf4j
@@ -73,7 +74,7 @@ public class MatchingController {
   }
 
   @GetMapping("/detail/{matchingId}")
-  public String matchingDetail(@PathVariable("matchingId") Long matchingId, Model model) {
+  public String matchingDetail(@PathVariable("matchingId") Long matchingId, Model model, HttpServletRequest request) {
 
     Matching matching = matchingService.findOne(matchingId);
     model.addAttribute("matching", matching);
@@ -85,13 +86,31 @@ public class MatchingController {
     model.addAttribute("playersA", playersA);
     model.addAttribute("playersB", playersB);
     model.addAttribute("playerAddForm", new PlayerAddForm());
+
+    HttpSession session = request.getSession(false);
+
+    if (session != null) {
+      Member member = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+      Player playerMemberCheck = matchingService.playerMemberCheck(matchingId, member.getId());
+      model.addAttribute("playerMemberCheck", playerMemberCheck);
+    }
+
     return "/matching/matchingDetail";
   }
 
-  @GetMapping("/delete/{matchingId}")
+  @PostMapping("/delete/{matchingId}")
   public String matchingDelete(@PathVariable("matchingId") Long matchingId) {
-    matchingService.deleteById(matchingId);
+    List<Player> players = playerService.findAllByMatchingId(matchingId);
+    matchingService.deleteById(matchingId, players);
+
     return "redirect:/matching/home";
+  }
+
+  @PostMapping("/delete/memberDelete/{matchingId}")
+  public String matchingMemberDelete(@PathVariable("matchingId") Long matchingId, Long memberId) {
+    matchingService.deleteMatchingMember(matchingId, memberId);
+    return "redirect:/matching/detail/" + matchingId;
   }
 
   @GetMapping("/update/{matchingId}")
@@ -130,10 +149,10 @@ public class MatchingController {
 
 
   @PostMapping("/player/add")
-  public String matchingPlayerAdd(@ModelAttribute("playerAddForm")PlayerAddForm form) {
+  public String matchingPlayerAdd(@ModelAttribute("playerAddForm")PlayerAddForm form, Long matchingId) {
     playerService.matchingPlayerAdd(form);
     matchingService.increasePlayerNumber(Long.valueOf(form.getMatchingId()));
     matchingService.matchingCondtionCheck(Long.valueOf(form.getMatchingId()));
-    return "redirect:/matching/home";
+    return "redirect:/matching/detail/" + matchingId;
   }
 }
